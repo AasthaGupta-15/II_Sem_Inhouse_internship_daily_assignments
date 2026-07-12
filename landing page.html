@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbitia — Space Station Air Tourism</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --neon:#00e5ff;
+    --neon-2:#7b2ff7;
+    --dark:#05070f;
+    --dark-2:#0b0f1f;
+  }
+  *{scroll-behavior:smooth;}
+  body{
+    font-family:'Poppins', sans-serif;
+    background:#ffffff;transition:background .35s ease;
+    color:#e9edf5;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.brand-font{
+    font-family:'Orbitron', sans-serif;
+  }
+
+  .navbar{
+    background:rgba(5,7,15,0.55);
+    backdrop-filter:blur(10px);
+    transition:background 0.3s ease;
+  }
+  .navbar.scrolled{
+    background:rgba(5,7,15,0.92);
+    box-shadow:0 2px 20px rgba(0,229,255,0.15);
+  }
+  .navbar-brand{
+    font-weight:900;
+    letter-spacing:2px;
+    font-size:1.4rem;
+    background:linear-gradient(90deg,var(--neon),var(--neon-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .navbar-brand i{
+    -webkit-text-fill-color:var(--neon);
+  }
+  .nav-link{
+    color:#cfd6e6!important;
+    font-weight:500;
+    letter-spacing:0.5px;
+    margin:0 6px;
+    position:relative;
+  }
+  .nav-link::after{
+    content:'';
+    position:absolute;
+    left:0;bottom:-2px;
+    width:0%;
+    height:2px;
+    background:var(--neon);
+    transition:width 0.3s ease;
+  }
+  .nav-link:hover::after{width:100%;}
+  .nav-link:hover{color:#fff!important;}
+  .btn-glow{
+    background:linear-gradient(90deg,var(--neon),var(--neon-2));
+    color:#05070f;
+    font-weight:700;
+    border:none;
+    border-radius:50px;
+    padding:10px 26px;
+    box-shadow:0 0 18px rgba(0,229,255,0.5);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .btn-glow:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 28px rgba(0,229,255,0.8);
+    color:#05070f;
+  }
+  .btn-outline-glow{
+    border:1.5px solid var(--neon);
+    color:#fff;
+    border-radius:50px;
+    padding:10px 26px;
+    font-weight:600;
+    background:rgba(255,255,255,0.03);
+    transition:all 0.25s ease;
+  }
+  .btn-outline-glow:hover{
+    background:var(--neon);
+    color:#05070f;
+    box-shadow:0 0 24px rgba(0,229,255,0.6);
+  }
+
+  .hero{
+    position:relative;
+    height:100vh;
+    min-height:650px;
+    display:flex;
+    align-items:center;
+    background:
+      radial-gradient(ellipse at top, rgba(123,47,247,0.25), transparent 60%),
+      url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1920&auto=format&fit=crop')
+      center/cover no-repeat fixed;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(5,7,15,0.55) 0%, rgba(5,7,15,0.75) 60%, var(--dark) 100%);
+  }
+  .hero-content{
+    position:relative;
+    z-index:2;
+  }
+  .hero .badge-pill{
+    background:rgba(0,229,255,0.12);
+    border:1px solid rgba(0,229,255,0.4);
+    color:var(--neon);
+    padding:8px 18px;
+    border-radius:50px;
+    font-size:0.85rem;
+    letter-spacing:1px;
+    font-weight:600;
+  }
+  .hero h1{
+    font-weight:900;
+    font-size:clamp(2.2rem, 5.5vw, 4.2rem);
+    line-height:1.15;
+    text-shadow:0 0 30px rgba(0,229,255,0.35), 2px 2px 18px rgba(0,0,0,0.6);
+  }
+  .hero h1 span{
+    background:linear-gradient(90deg,var(--neon),var(--neon-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .hero p.lead{
+    color:#c8d0e0;
+    max-width:560px;
+  }
+  .scroll-cue{
+    position:absolute;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:2;
+    color:#9fb0cc;
+    font-size:0.8rem;
+    letter-spacing:2px;
+    text-align:center;
+    animation:bounce 2.2s infinite;
+  }
+  @keyframes bounce{
+    0%,100%{transform:translate(-50%,0);}
+    50%{transform:translate(-50%,10px);}
+  }
+
+  .stars{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+  }
+  .stars span{
+    position:absolute;
+    width:2px;height:2px;
+    background:#fff;
+    border-radius:50%;
+    opacity:0.7;
+    animation:twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle{0%,100%{opacity:0.2;}50%{opacity:1;}}
+
+  .section-pad{padding:100px 0;}
+  .section-title{
+    font-weight:800;
+    text-shadow:1px 1px 14px rgba(0,229,255,0.18);
+  }
+  .section-sub{
+    color:#9aa6bd;
+    max-width:600px;
+  }
+  .divider-glow{
+    width:70px;height:4px;
+    margin:14px auto 0;
+    background:linear-gradient(90deg,var(--neon),var(--neon-2));
+    border-radius:10px;
+  }
+
+  .why-section{
+    background:var(--dark-2);
+    position:relative;
+  }
+  .feature-box{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:20px;
+    padding:34px 26px;
+    height:100%;
+    transition:transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .feature-box:hover{
+    transform:translateY(-8px);
+    border-color:var(--neon);
+    box-shadow:0 16px 36px rgba(0,229,255,0.15);
+  }
+  .feature-icon{
+    width:62px;height:62px;
+    border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;
+    background:linear-gradient(135deg,var(--neon),var(--neon-2));
+    color:#05070f;
+    margin-bottom:18px;
+    box-shadow:0 0 20px rgba(0,229,255,0.35);
+  }
+  .feature-box h5{font-weight:700;}
+  .feature-box p{color:#a8b2c6;font-size:0.95rem;margin-bottom:0;}
+
+  .package-card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:22px;
+    overflow:hidden;
+    transition:transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    height:100%;
+  }
+  .package-card:hover{
+    transform:translateY(-10px) scale(1.01);
+    box-shadow:0 20px 50px rgba(123,47,247,0.25);
+    border-color:var(--neon-2);
+  }
+  .package-card.featured{
+    border-color:var(--neon);
+    box-shadow:0 0 40px rgba(0,229,255,0.2);
+  }
+  .package-img{
+    height:190px;
+    background-size:cover;
+    background-position:center;
+    position:relative;
+  }
+  .package-img::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 40%, rgba(5,7,15,0.9) 100%);
+  }
+  .package-tag{
+    position:absolute;
+    top:14px;right:14px;
+    background:rgba(0,0,0,0.5);
+    color:var(--neon);
+    border:1px solid var(--neon);
+    padding:4px 12px;
+    border-radius:50px;
+    font-size:0.72rem;
+    letter-spacing:1px;
+    z-index:2;
+    font-weight:700;
+  }
+  .package-body{padding:26px;}
+  .package-price{
+    font-family:'Orbitron', sans-serif;
+    font-size:1.9rem;
+    font-weight:700;
+    color:var(--neon);
+  }
+  .package-price small{
+    font-size:0.85rem;
+    color:#8a93a8;
+    font-family:'Poppins', sans-serif;
+    font-weight:400;
+  }
+  .package-list{
+    list-style:none;
+    padding:0;
+    margin:18px 0;
+  }
+  .package-list li{
+    color:#c1c9da;
+    font-size:0.92rem;
+    margin-bottom:8px;
+  }
+  .package-list i{
+    color:var(--neon);
+    margin-right:8px;
+  }
+  .btn-package{
+    border-radius:50px;
+    font-weight:600;
+    width:100%;
+    padding:10px;
+  }
+
+  .stats-strip{
+    background:linear-gradient(90deg, rgba(0,229,255,0.08), rgba(123,47,247,0.08));
+    border-top:1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .stat-num{
+    font-family:'Orbitron', sans-serif;
+    font-weight:800;
+    font-size:2.3rem;
+    background:linear-gradient(90deg,var(--neon),var(--neon-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .stat-label{color:#9aa6bd;font-size:0.9rem;letter-spacing:0.5px;}
+
+  .cta-section{
+    background:
+      radial-gradient(circle at 30% 30%, rgba(123,47,247,0.25), transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(0,229,255,0.2), transparent 60%),
+      var(--dark-2);
+    border-radius:40px;
+    margin:0 auto;
+    max-width:1140px;
+    padding:70px 40px;
+    text-align:center;
+  }
+
+  footer{
+    background:#03040a;
+    border-top:1px solid rgba(255,255,255,0.06);
+    padding-top:60px;
+  }
+  footer h6{
+    color:#fff;
+    font-weight:700;
+    letter-spacing:1px;
+  }
+  footer a{
+    color:#8d97ad;
+    text-decoration:none;
+    font-size:0.92rem;
+    transition:color 0.2s ease;
+  }
+  footer a:hover{color:var(--neon);}
+  .social-icon{
+    width:42px;height:42px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+    display:flex;align-items:center;justify-content:center;
+    transition:all 0.25s ease;
+    color:#cfd6e6;
+  }
+  .social-icon:hover{
+    background:linear-gradient(135deg,var(--neon),var(--neon-2));
+    color:#05070f;
+    transform:translateY(-4px);
+  }
+  .footer-bottom{
+    border-top:1px solid rgba(255,255,255,0.06);
+    margin-top:40px;
+    padding:20px 0;
+    font-size:0.85rem;
+    color:#6e7891;
+  }
+
+  @media (max-width:576px){
+    .hero{background-attachment:scroll;}
+    .cta-section{border-radius:24px;padding:50px 20px;}
+  }
+
+body.dark-mode{background:#05070f!important;}
+.theme-btn{position:fixed;top:18px;right:18px;width:48px;height:48px;border:none;border-radius:50%;background:#111;color:#fff;font-size:20px;cursor:pointer;z-index:9999;}
+</style>
+</head>
+<body>
+<button id='themeToggle' class='theme-btn'>🌙</button>
+
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="bi bi-rocket-takeoff-fill me-2"></i>ORBITIA</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#why">Why Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="#packages">Packages</a></li>
+        <li class="nav-item"><a class="nav-link" href="#footer">Contact</a></li>
+        <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+          <a href="#packages" class="btn btn-glow">Book Your Seat</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="home">
+  <div class="stars" id="starField"></div>
+  <div class="container hero-content">
+    <div class="row">
+      <div class="col-lg-8">
+        <span class="badge-pill mb-4 d-inline-block"><i class="bi bi-stars me-1"></i> NEXT LAUNCH WINDOW: DEC 2026</span>
+        <h1 class="mt-3">Your Journey to the <span>Edge of Space</span> Begins Here</h1>
+        <p class="lead mt-4">Experience zero gravity, witness Earth's curvature, and float among the stars aboard Orbitia's next-generation space station shuttles. Safe, certified, unforgettable.</p>
+        <div class="mt-4 d-flex flex-wrap gap-3">
+          <a href="#packages" class="btn btn-glow btn-lg"><i class="bi bi-rocket-takeoff me-2"></i>Explore Packages</a>
+          <a href="#why" class="btn btn-outline-glow btn-lg"><i class="bi bi-play-circle me-2"></i>Watch Experience</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue"><i class="bi bi-chevron-double-down d-block mb-1"></i>SCROLL</div>
+</header>
+
+<section class="stats-strip py-4">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-num">1,200+</div>
+        <div class="stat-label">Tourists Launched</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-num">99.9%</div>
+        <div class="stat-label">Safety Record</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Years in Orbit</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Station Destinations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="why-section section-pad">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title display-6">Why Choose Orbitia</h2>
+      <div class="divider-glow"></div>
+      <p class="section-sub mx-auto mt-3">We've redefined commercial spaceflight with safety, comfort, and the kind of view no postcard could ever capture.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+          <h5>Certified Safety</h5>
+          <p>Triple-redundant life support and FAA-certified shuttles built for crewed orbital flight.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon"><i class="bi bi-person-arms-up"></i></div>
+          <h5>Zero-G Training</h5>
+          <p>Three days of astronaut-grade preparation so you launch ready and land confident.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon"><i class="bi bi-globe-americas"></i></div>
+          <h5>Earth-View Suites</h5>
+          <p>Panoramic observation decks aboard the station for uninterrupted views of home.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="feature-box">
+          <div class="feature-icon"><i class="bi bi-headset"></i></div>
+          <h5>24/7 Mission Support</h5>
+          <p>A dedicated ground and orbital crew monitoring every second of your journey.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="packages" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title display-6">Tourist Packages</h2>
+      <div class="divider-glow"></div>
+      <p class="section-sub mx-auto mt-3">Choose the mission that matches your sense of adventure — from suborbital hops to extended station stays.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="package-card">
+          <div class="package-img" style="background-image:url('https://images.unsplash.com/photo-1457364559154-aa2644600ebb?q=80&w=900&auto=format&fit=crop');">
+            <span class="package-tag">SUBORBITAL</span>
+          </div>
+          <div class="package-body">
+            <h5 class="fw-bold">Stratos Hop</h5>
+            <div class="package-price">$250K <small>/ seat</small></div>
+            <ul class="package-list mt-3">
+              <li><i class="bi bi-check-circle-fill"></i>15 minutes zero gravity</li>
+              <li><i class="bi bi-check-circle-fill"></i>2-day pre-flight training</li>
+              <li><i class="bi bi-check-circle-fill"></i>HD flight footage included</li>
+              <li><i class="bi bi-check-circle-fill"></i>Astronaut wings certificate</li>
+            </ul>
+            <a href="#" class="btn btn-outline-glow btn-package">Choose Plan</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="package-card featured position-relative">
+          <div class="package-img" style="background-image:url('https://images.unsplash.com/photo-1446776709462-d6b525c57bd3?q=80&w=900&auto=format&fit=crop');">
+            <span class="package-tag">MOST POPULAR</span>
+          </div>
+          <div class="package-body">
+            <h5 class="fw-bold">Orbital Voyager</h5>
+            <div class="package-price">$1.2M <small>/ seat</small></div>
+            <ul class="package-list mt-3">
+              <li><i class="bi bi-check-circle-fill"></i>3 days aboard the space station</li>
+              <li><i class="bi bi-check-circle-fill"></i>Full astronaut training program</li>
+              <li><i class="bi bi-check-circle-fill"></i>Private observation suite</li>
+              <li><i class="bi bi-check-circle-fill"></i>Live Earth-link broadcast</li>
+            </ul>
+            <a href="#" class="btn btn-glow btn-package">Choose Plan</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="package-card">
+          <div class="package-img" style="background-image:url('https://images.unsplash.com/photo-1614313913007-2b4ae8ce32d6?q=80&w=900&auto=format&fit=crop');">
+            <span class="package-tag">DEEP STAY</span>
+          </div>
+          <div class="package-body">
+            <h5 class="fw-bold">Lunar Gateway</h5>
+            <div class="package-price">$4.8M <small>/ seat</small></div>
+            <ul class="package-list mt-3">
+              <li><i class="bi bi-check-circle-fill"></i>10-day lunar orbit mission</li>
+              <li><i class="bi bi-check-circle-fill"></i>Spacewalk experience option</li>
+              <li><i class="bi bi-check-circle-fill"></i>Dedicated mission specialist</li>
+              <li><i class="bi bi-check-circle-fill"></i>Personal moon-view cabin</li>
+            </ul>
+            <a href="#" class="btn btn-outline-glow btn-package">Choose Plan</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad pt-0">
+  <div class="container">
+    <div class="cta-section">
+      <h2 class="section-title display-6">Ready to Leave Earth Behind?</h2>
+      <p class="section-sub mx-auto mt-3 mb-4">Seats for our 2026–2027 launch windows are filling fast. Reserve your place among the stars today.</p>
+      <a href="#" class="btn btn-glow btn-lg me-2"><i class="bi bi-rocket-takeoff me-2"></i>Reserve My Seat</a>
+      <a href="#footer" class="btn btn-outline-glow btn-lg">Talk to Mission Crew</a>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-lg-4">
+        <a class="navbar-brand d-inline-block mb-3" href="#"><i class="bi bi-rocket-takeoff-fill me-2"></i>ORBITIA</a>
+        <p style="color:#8d97ad;font-size:0.92rem;">Commercial space tourism redefined. Taking dreamers beyond the sky since 2014.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Explore</h6>
+        <ul class="list-unstyled mt-3">
+          <li class="mb-2"><a href="#home">Home</a></li>
+          <li class="mb-2"><a href="#why">Why Us</a></li>
+          <li class="mb-2"><a href="#packages">Packages</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Company</h6>
+        <ul class="list-unstyled mt-3">
+          <li class="mb-2"><a href="#">About</a></li>
+          <li class="mb-2"><a href="#">Careers</a></li>
+          <li class="mb-2"><a href="#">Safety</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4">
+        <h6>Mission Control HQ</h6>
+        <p style="color:#8d97ad;font-size:0.92rem;" class="mt-3 mb-1"><i class="bi bi-geo-alt-fill me-2"></i>Cape Horizon, FL, USA</p>
+        <p style="color:#8d97ad;font-size:0.92rem;" class="mb-1"><i class="bi bi-envelope-fill me-2"></i>fly@orbitia.space</p>
+        <p style="color:#8d97ad;font-size:0.92rem;"><i class="bi bi-telephone-fill me-2"></i>+1 (800) 555-ORBIT</p>
+      </div>
+    </div>
+    <div class="footer-bottom text-center">
+      &copy; 2026 Orbitia Space Tourism. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js">
+const btn=document.getElementById('themeToggle');
+btn.onclick=()=>{document.body.classList.toggle('dark-mode');btn.textContent=document.body.classList.contains('dark-mode')?'☀️':'🌙';localStorage.setItem('theme',document.body.classList.contains('dark-mode')?'dark':'light');};
+if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark-mode');btn.textContent='☀️';}
+</script>
+<script>
+  const starField = document.getElementById('starField');
+  const starCount = 80;
+  for(let i=0;i<starCount;i++){
+    const s = document.createElement('span');
+    s.style.top = Math.random()*100 + '%';
+    s.style.left = Math.random()*100 + '%';
+    s.style.animationDelay = (Math.random()*3) + 's';
+    s.style.width = s.style.height = (Math.random()*2 + 1) + 'px';
+    starField.appendChild(s);
+  }
+
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+const btn=document.getElementById('themeToggle');
+btn.onclick=()=>{document.body.classList.toggle('dark-mode');btn.textContent=document.body.classList.contains('dark-mode')?'☀️':'🌙';localStorage.setItem('theme',document.body.classList.contains('dark-mode')?'dark':'light');};
+if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark-mode');btn.textContent='☀️';}
+</script>
+</body>
+</html>
